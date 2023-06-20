@@ -164,7 +164,7 @@ HOSTCFLAGS		+= $(WARNINGS) $(DEFINES) -iquote include/
 export AFLAGS CFLAGS USERCLFAGS HOSTCFLAGS
 
 # Default target
-all: flog criu lib crit
+all: flog criu lib
 .PHONY: all
 
 #
