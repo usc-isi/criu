@@ -64,9 +64,9 @@ static int parse_pid_status(int pid, struct seize_task_status *ss, void *data)
 	if (!f)
 		return -1;
 
-	ss->ppid = -1; /* Not needed at this point */
-	ss->seccomp_mode = SECCOMP_MODE_DISABLED;
-
+	ss->ppid = -1; /* ppid is parent process ID, not needed at this point */ 
+	ss->seccomp_mode = SECCOMP_MODE_DISABLED; /* seccomp (secure computing) is a security feature in the Linux kernel that restricts the system calls a process can make.*/
+	// reads /proc/pid/status line by line to find relevant info
 	while (fgets(aux, sizeof(aux), f)) {
 		if (!strncmp(aux, "State:", 6)) {
 			ss->state = aux[7];
@@ -422,6 +422,9 @@ int compel_resume_task_sig(pid_t pid, int orig_st, int st, int stop_signo)
 	return ret;
 }
 
+/***
+ * generates a Unix domain socket address, based on the provided key.
+***/
 static int gen_parasite_saddr(struct sockaddr_un *saddr, int key)
 {
 	int sun_len;
@@ -430,11 +433,11 @@ static int gen_parasite_saddr(struct sockaddr_un *saddr, int key)
 	snprintf(saddr->sun_path, UNIX_PATH_MAX, "X/crtools-pr-%d-%" PRIx64, key, compel_run_id);
 
 	sun_len = SUN_LEN(saddr);
-	*saddr->sun_path = '\0';
-
+	*saddr->sun_path = '\0'; // making the first character of the sun_path array to be a null byte to indicate an abstract socket (a socket not tied to a filesystem path)
+	pr_info("returning sun_len = %d \n", sun_len);
 	return sun_len;
 }
-
+// generates address for a socket, binds it to the provided socket descriptor, and puts the socket into a listening state. 
 static int prepare_tsock(struct parasite_ctl *ctl, pid_t pid, struct parasite_init_args *args)
 {
 	int ssock = -1;
@@ -484,6 +487,8 @@ err:
 	return -1;
 }
 
+// sets up a signal handler for the SIGCHLD signal in the parent process,
+// SIGCHLD is sent to parent when its child process terminates, is interrupted by a signal, or resumes after being interrupted by a signal
 static int setup_child_handler(struct parasite_ctl *ctl)
 {
 	struct sigaction sa = {
@@ -641,7 +646,9 @@ int compel_execute_syscall(struct parasite_ctl *ctl, user_regs_struct_t *regs, c
 	err = parasite_run(pid, PTRACE_CONT, ctl->ictx.syscall_ip, 0, regs, &ctl->orig);
 	if (!err)
 		err = parasite_trap(ctl, pid, regs, &ctl->orig, false);
-
+	}
+		
+	//  write data to the memory space of the traced process
 	if (ptrace_poke_area(pid, (void *)code_orig, (void *)ctl->ictx.syscall_ip, sizeof(code_orig))) {
 		pr_err("Can't restore syscall blob (pid: %d)\n", ctl->rpid);
 		err = -1;
@@ -686,7 +693,7 @@ static int parasite_init_daemon(struct parasite_ctl *ctl)
 
 	*ctl->cmd = PARASITE_CMD_INIT_DAEMON;
 
-	args = compel_parasite_args(ctl, struct parasite_init_args);
+	args = compel_parasite_args(ctl, struct parasite_init_args); // return ctl->args;
 
 	args->sigframe = (uintptr_t)ctl->rsigframe;
 	args->log_level = compel_log_get_loglevel();
@@ -694,7 +701,7 @@ static int parasite_init_daemon(struct parasite_ctl *ctl)
 	args->page_size = PAGE_SIZE;
 #endif
 
-	futex_set(&args->daemon_connected, 0);
+	futex_set(&args->daemon_connected, 0); //  A futex (short for "fast userspace mutex") is a synchronization primitive used in Linux that allows for efficient inter-process and inter-thread communication.
 
 	if (prepare_tsock(ctl, pid, args))
 		goto err;
@@ -735,6 +742,10 @@ err:
 	return -1;
 }
 
+/*
+	prepares and initializes the parasite daemon inside the victim, 
+	which allows CRIU to perform various operations within the victim's address space
+*/
 static int parasite_start_daemon(struct parasite_ctl *ctl)
 {
 	pid_t pid = ctl->rpid;
@@ -805,6 +816,9 @@ static void parasite_memfd_close(struct parasite_ctl *ctl, int fd)
 		pr_err("Can't close memfd\n");
 }
 
+/*
+	 set up the parasite code and data in the tracee process
+*/
 static int parasite_memfd_exchange(struct parasite_ctl *ctl, unsigned long size, int remote_prot)
 {
 	void *where = (void *)ctl->ictx.syscall_ip + BUILTIN_SYSCALL_SIZE;
@@ -818,12 +832,12 @@ static int parasite_memfd_exchange(struct parasite_ctl *ctl, unsigned long size,
 		return 1;
 
 	BUILD_BUG_ON(sizeof(orig_code) < sizeof(long));
-
+	// Store the original code at the injection location in the tracee
 	if (ptrace_swap_area(pid, where, (void *)orig_code, sizeof(orig_code))) {
 		pr_err("Can't inject memfd args (pid: %d)\n", pid);
 		return -1;
 	}
-
+	// inject the memfd_create syscall arguments into the tracee and execute the syscall
 	ret = compel_syscall(ctl, __NR(memfd_create, compat_task), &sret, (unsigned long)where, 0, 0, 0, 0, 0);
 
 	if (ptrace_poke_area(pid, orig_code, where, sizeof(orig_code))) {
@@ -882,6 +896,9 @@ err_cure:
 	return -1;
 }
 
+/*
+	apply relocation entries to the parasite code in the victim's memory.
+*/
 void compel_relocs_apply(void *mem, void *vbase, struct parasite_blob_desc *pbd)
 {
 	compel_reloc_t *elf_relocs = pbd->hdr.relocs;
@@ -939,6 +956,10 @@ long remote_mprotect(struct parasite_ctl *ctl, void *addr, size_t len, int prot)
 	return ret;
 }
 
+/*
+	set up a shared memory region between the tracer and the victim process
+	size argument is parasite size
+*/
 static int compel_map_exchange(struct parasite_ctl *ctl, unsigned long size)
 {
 	int ret, remote_prot;
@@ -1121,7 +1142,7 @@ static int prepare_thread(int pid, struct thread_ctx *ctx)
 		return -1;
 	}
 
-	if (ptrace_get_regs(pid, &ctx->regs)) {
+	if (ptrace_get_regs(pid, &ctx->regs)) { // get GP regs into iov
 		pr_perror("Can't obtain registers (pid: %d)", pid);
 		return -1;
 	}
@@ -1137,7 +1158,9 @@ void compel_release_thread(struct parasite_thread_ctl *tctl)
 	 */
 	xfree(tctl);
 }
-
+/*
+	prepares a control structure for a target process with the given pid
+*/
 struct parasite_ctl *compel_prepare_noctx(int pid)
 {
 	struct parasite_ctl *ctl = NULL;
@@ -1301,7 +1324,10 @@ static int save_regs_plain(void *to, user_regs_struct_t *r, user_fpregs_struct_t
 
 	return 0;
 }
-
+/*
+	 preparing a signal frame, 
+	 which is used to store the context of a process when a signal is delivered
+*/
 static int make_sigframe_plain(void *from, struct rt_sigframe *f, struct rt_sigframe *rtf, k_rtsigset_t *b)
 {
 	struct plain_regs_struct *prs = from;
@@ -1344,7 +1370,9 @@ struct parasite_ctl *compel_prepare(int pid)
 	ictx->open_proc = simple_open_proc;
 	ictx->syscall_ip = find_executable_area(pid);
 	ictx->child_handler = handle_sigchld;
-	sigaction(SIGCHLD, NULL, &ictx->orig_handler);
+	
+	//sigaction retrieves the current signal handler for the SIGCHLD signal 
+	sigaction(SIGCHLD, NULL, &ictx->orig_handler); // SIGCHLD is a signal sent to parent when one of its child processes terminates or stops
 
 	ictx->save_regs = save_regs_plain;
 	ictx->make_sigframe = make_sigframe_plain;
