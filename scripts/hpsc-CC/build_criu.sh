@@ -24,7 +24,7 @@ fi
 
 
 CFLAGS=$(pkg-config --cflags libprotobuf-c)
-CFLAGS+=" -I$INCLUDE_DIR_CC -L$LIB_DIR_CC"
+CFLAGS+=" -I$INCLUDE_DIR_CC -I$LIBCAP_INCLUDE_DIR -L$LIB_DIR_CC -L$LIBCAP_LIB_DIR"
 
 
 LDFLAGS=$(pkg-config --libs libprotobuf-c)

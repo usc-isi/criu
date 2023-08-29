@@ -11,11 +11,11 @@ TARGET_ARCH="riscv64"
 # TARGET_ARCH="aarch64"
 
 # the root directory that contains CRIU's source code
-CRIU_ROOT_DIR="/home/yixue/isi-criu"
+CRIU_ROOT_DIR="/home/yixue/clean_space/criu"
 
 # the root directory that will contain the cross compiled artifacts (initially empty)
 # e.g., the RISC-V binaries of protobuf (CRIU's required package)
-BUILD_ROOT_DIR="/home/yixue/cross-compile-riscv64-artifacts"
+BUILD_ROOT_DIR="/home/yixue/clean_space/cross-compile-riscv64-artifacts"
 # BUILD_ROOT_DIR="/home/yixue/cross-compile-arm64-artifacts"
 mkdir -p $BUILD_ROOT_DIR
 
@@ -24,6 +24,10 @@ mkdir -p $BUILD_ROOT_DIR
 INCLUDE_DIR_CC="$BUILD_ROOT_DIR/riscv64_pb_install/include"
 LIB_DIR_CC="$BUILD_ROOT_DIR/riscv64_pb_install/lib"
 TOOLCHAIN_INCLUDE_DIR="$TOOLCHAIN_ROOT/sysroot/usr/include"
+
+# libcap specific configs after cross compiling
+LIBCAP_LIB_DIR="$BUILD_ROOT_DIR/libcap-2.69/libcap"
+LIBCAP_INCLUDE_DIR="$LIBCAP_LIB_DIR/include"
 
 # the directory that contains the toolchain libraries, e.g., libpthread.so.0
 TOOLCHAIN_LIB_DIR="$TOOLCHAIN_ROOT/sysroot/lib"
