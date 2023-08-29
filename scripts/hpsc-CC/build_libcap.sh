@@ -38,13 +38,13 @@ download_extract () {
 build_libcap_riscv64_prep () {
     # go to the folder where the extracted files are
     cd "$BUILD_ROOT_DIR/libcap-2.69" 
-    make CC=dummy 
+    make CROSS_COMPILE=riscv64-unknown-linux-gnu-
 }
 
 build_libcap_riscv64 () {
     # go to the folder where the extracted files are
     cd "$BUILD_ROOT_DIR/libcap-2.69" 
-    make CC=riscv64-unknown-linux-gnu-gcc && make install CC=riscv64-unknown-linux-gnu-gcc 
+    make CROSS_COMPILE=riscv64-unknown-linux-gnu- && make install CROSS_COMPILE=riscv64-unknown-linux-gnu-
 }
 
 main () {
@@ -70,7 +70,7 @@ main () {
                 n|N)
                     cd "$BUILD_ROOT_DIR/libcap-2.69/libcap"
                     gcc -o _makenames _makenames.c
-                    gcc -o empty empty.c
+                    # gcc -o empty empty.c
                     cd "$BUILD_ROOT_DIR/libcap-2.69"
                     measure_func_time build_libcap_riscv64
                     ;;
