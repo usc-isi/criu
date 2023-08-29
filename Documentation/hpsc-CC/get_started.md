@@ -17,6 +17,17 @@ You can download the cross compiled artifacts `cross-compile-riscv64-artifacts` 
 
 If you want to cross compile your own packages, you can reuse the cross compile scripts in [this folder](https://github.com/usc-isi/criu/tree/HPSC-RISCV64-CC/scripts/hpsc-CC). For example, `build_protobuf.sh` cross compiles `protobuf` and `protobuf-c` and you can specify the versions you desire in the scripts.
 
+### Notes to cross compile libcap
+
+1. go to CRIU's source code (see below if you need to clone the source code) under `scripts/hpsc-CC` and run `sudo ./build_libcap.sh`. Please follow the prompt and select `y` when you first run it and expect some errors. Then run it again `sudo ./build_libcap.sh` and select `n` the second time. You should see the screenshot below when cross compiling is successful after the second run.
+
+![screenshot of cross compiling libcap](libcap.png)
+
+2. `libcap` will be cross compiled under the `$BUILD_ROOT_DIR/libcap-2.69` folder where `$BUILD_ROOT_DIR` is specified in `scripts/hpsc-CC/config.sh`. Now double check `scripts/hpsc-CC/config.sh` where `$LIBCAP_INCLUDE_DIR` and `$LIBCAP_LIB_DIR` should point to the cross compiled artifacts as shown below. For example,  `$LIBCAP_LIB_DIR` foler should contain `.so` file you cross compiled for RISC-V.
+
+![screenshot of cross compiling libcap](libcap_artifacts.png)
+
+3. with the correct configuration of `libcap` in the previous step, you can build criu following the steps below.
 
 ## Cross Compile CRIU
 
