@@ -34,17 +34,10 @@ download_extract () {
 #     make && make install
 # }
 
-# build the riscv64 version 
-build_libcap_riscv64_prep () {
-    # go to the folder where the extracted files are
-    cd "$BUILD_ROOT_DIR/libcap-2.69" 
-    make CROSS_COMPILE=riscv64-unknown-linux-gnu-
-}
-
 build_libcap_riscv64 () {
     # go to the folder where the extracted files are
     cd "$BUILD_ROOT_DIR/libcap-2.69" 
-    make CROSS_COMPILE=riscv64-unknown-linux-gnu- && make install CROSS_COMPILE=riscv64-unknown-linux-gnu-
+    make CROSS_COMPILE=riscv64-unknown-linux-gnu- BUILD_CC=gcc && make install CROSS_COMPILE=riscv64-unknown-linux-gnu-
 }
 
 main () {
@@ -58,27 +51,7 @@ main () {
         
         "riscv64")
             printf "${BCyan}building libcap for $TARGET_ARCH${Color_Off}\n"
-            printf "is this your first time running this script? (y/n) \n"
-            read user_input
-
-            case $user_input in
-                y|Y)
-                    printf "expect error and run the script again. choose n next time\n press Enter to continue \n"
-                    read dummy_input
-                    measure_func_time build_libcap_riscv64_prep
-                    ;;
-                n|N)
-                    cd "$BUILD_ROOT_DIR/libcap-2.69/libcap"
-                    gcc -o _makenames _makenames.c
-                    # gcc -o empty empty.c
-                    cd "$BUILD_ROOT_DIR/libcap-2.69"
-                    measure_func_time build_libcap_riscv64
-                    ;;
-                *)
-                    echo "Invalid input. Please enter 'y' or 'n'."
-                    exit 1
-                    ;;
-            esac
+             measure_func_time build_libcap_riscv64      
             ;;
 
         *)
