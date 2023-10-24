@@ -1,0 +1,17 @@
+include ../../../../criu/Makefile.versions
+
+TESTS += loop_counter_dump
+TESTS += loop_counter_restore
+
+all: $(TESTS)
+.PHONY: all
+
+define genb
+$(1): $(1).o lib.o
+	$(CC) $(CFLAGS) $(LDFLAGS) $$^ -L ../../../../criu/lib/c/ -L ../../../../criu/images/ -lcriu -o $$@
+endef
+
+$(foreach t, $(TESTS), $(eval $(call genb, $(t))))
+
+%.o: %.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -c $^ -iquote ../../../../criu/criu/include -I../../../../criu/lib/c/ -I../../../../criu/images/ -o $@ -Werror
