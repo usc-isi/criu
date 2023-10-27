@@ -711,7 +711,7 @@ static int parasite_init_daemon(struct parasite_ctl *ctl)
 	args->log_level = compel_log_get_loglevel();
 #ifdef ARCH_HAS_LONG_PAGES
 	args->page_size = PAGE_SIZE;
-	pr_info("PAGE_SIZE: %d\n", PAGE_SIZE); // 4096 bytes for HPSC
+	pr_info("PAGE_SIZE: %lu\n", PAGE_SIZE); // 4096 bytes for HPSC
 #endif
 
 	futex_set(
