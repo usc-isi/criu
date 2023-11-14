@@ -9,6 +9,7 @@
 #define __CR_GENERIC_BITOPS_H__
 
 #include "common/asm/bitsperlong.h"
+#include <limits.h> 
 
 #define DIV_ROUND_UP(n, d) (((n) + (d)-1) / (d))
 #define BITS_TO_LONGS(nr)  DIV_ROUND_UP(nr, BITS_PER_LONG)
@@ -56,10 +57,24 @@ static inline void clear_bit(int nr, volatile unsigned long *addr)
  *
  * Undefined if no bit exists, so code should check against 0 first.
  */
-static inline unsigned long __ffs(unsigned long word)
-{
-	return __builtin_ffsl(word) - 1;
+// static inline unsigned long __ffs(unsigned long word)
+// {
+// 	return __builtin_ffsl(word) - 1;
+// }
+static inline unsigned long __ffs(unsigned long word) {
+    unsigned long position = 0;
+	if (word == 0) {
+        return ULONG_MAX; // Indicates no bits are set.
+    }
+    
+    while (!(word & 1)) {
+        word >>= 1;
+        position++;
+    }
+
+    return position;
 }
+
 
 #define BITOP_WORD(nr) ((nr) / BITS_PER_LONG)
 
