@@ -5,7 +5,8 @@ echo "running script: build_libnl.sh"
 . ./config.sh
 . ./util.sh
 
-LIBNL_DOWNLOAD_URL="https://www.infradead.org/~tgr/libnl/files/libnl-3.2.25.tar.gz"
+# LIBNL_DOWNLOAD_URL="https://www.infradead.org/~tgr/libnl/files/libnl-3.2.25.tar.gz"
+LIBNL_DOWNLOAD_URL="https://github.com/thom311/libnl/releases/download/libnl3_8_0/libnl-3.8.0.tar.gz"
 
 # download source code and extract it, including both libnet and libnet-c
 download_extract () {
@@ -17,27 +18,27 @@ download_extract () {
 
 
 # build the arm64 version 
-build_libnl_arm64 () {
-    # go to the folder where the extracted files are
-    cd "$BUILD_ROOT_DIR/libnl-3.2.25" 
+# build_libnl_arm64 () {
+#     # go to the folder where the extracted files are
+#     cd "$BUILD_ROOT_DIR/libnl-3.2.25" 
 
-    mkdir -p arm64_build
-    cd arm64_build
+#     mkdir -p arm64_build
+#     cd arm64_build
     
-    CC=aarch64-linux-gnu-gcc \
-    CXX=aarch64-linux-gnu-g++ \
-    LD=aarch64-linux-gnu-ld \
-    AR=aarch64-linux-gnu-ar \
-    STRIP=aarch64-linux-gnu-strip \
-    ../configure --prefix=$BUILD_ROOT_DIR/arm64_pb_install \
-    --enable-static --host=aarch64-unknown-linux-gnu
+#     CC=aarch64-linux-gnu-gcc \
+#     CXX=aarch64-linux-gnu-g++ \
+#     LD=aarch64-linux-gnu-ld \
+#     AR=aarch64-linux-gnu-ar \
+#     STRIP=aarch64-linux-gnu-strip \
+#     ../configure --prefix=$BUILD_ROOT_DIR/arm64_pb_install \
+#     --enable-static --host=aarch64-unknown-linux-gnu
 
-    make && make install
-}
+#     make && make install
+# }
 
 build_libnl_riscv64 () {
     # go to the folder where the extracted files are
-    cd "$BUILD_ROOT_DIR/libnl-3.2.25" 
+    cd "$BUILD_ROOT_DIR/libnl-3.8.0" 
 
     mkdir -p riscv64_build
     cd riscv64_build
