@@ -12,9 +12,6 @@ build_iproute2_riscv64 () {
     git clone $IPROUTE2_GIT_URL
     cd iproute2
 
-    # mkdir -p riscv64_build
-    # cd riscv64_build
-    
     make CROSS_COMPILE=riscv64-unknown-linux-gnu- BUILD_CC=gcc && make install CROSS_COMPILE=riscv64-unknown-linux-gnu-
 
 }
