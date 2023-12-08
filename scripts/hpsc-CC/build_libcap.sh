@@ -37,7 +37,8 @@ download_extract () {
 build_libcap_riscv64 () {
     # go to the folder where the extracted files are
     cd "$BUILD_ROOT_DIR/libcap-2.69" 
-    make CROSS_COMPILE=riscv64-unknown-linux-gnu- BUILD_CC=gcc && make install CROSS_COMPILE=riscv64-unknown-linux-gnu-
+    make CROSS_COMPILE=riscv64-unknown-linux-gnu- BUILD_CC=gcc prefix=$BUILD_ROOT_DIR/riscv64_pb_install && \
+    make install CROSS_COMPILE=riscv64-unknown-linux-gnu- prefix=$BUILD_ROOT_DIR/riscv64_pb_install
 }
 
 main () {

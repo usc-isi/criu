@@ -6,7 +6,7 @@ printf "${BCyan}running script: build_criu.sh${Color_Off}\n"
 
 cd $CRIU_ROOT_DIR
 
-export PATH=$BUILD_ROOT_DIR/x86_64_pb_install/bin:$PATH
+# export PATH=$BUILD_ROOT_DIR/x86_64_pb_install/bin:$PATH
 # export PKG_CONFIG_PATH=$BUILD_ROOT_DIR/arm64_pb_install/lib/pkgconfig:$PKG_CONFIG_PATH
 export PKG_CONFIG_PATH=$BUILD_ROOT_DIR/riscv64_pb_install/lib/pkgconfig:$PKG_CONFIG_PATH
 
@@ -22,9 +22,8 @@ if [ -f "$file" ] ; then
     rm "$file"
 fi
 
-
 CFLAGS=$(pkg-config --cflags libprotobuf-c)
-CFLAGS+=" -I$INCLUDE_DIR_CC -I$LIBCAP_INCLUDE_DIR -L$LIB_DIR_CC -L$LIBCAP_LIB_DIR"
+CFLAGS+=" -I$INCLUDE_DIR_CC -L$LIB_DIR_CC -L$LIB64_DIR_CC"
 
 
 LDFLAGS=$(pkg-config --libs libprotobuf-c)
