@@ -8,12 +8,19 @@ echo "running script: build_iproute2.sh"
 IPROUTE2_GIT_URL="git://git.kernel.org/pub/scm/network/iproute2/iproute2.git"
 
 build_iproute2_riscv64 () {
+    export CROSS_COMPILE=riscv64-unknown-linux-gnu-
+    export CC=${CROSS_COMPILE}gcc
+    export AR=${CROSS_COMPILE}ar
+    export PKG_CONFIG_LIBDIR=$LIB_DIR_CC/pkgconfig:$LIB64_DIR_CC/pkgconfig #override PKG_CONFIG_PATH for cross compiling
+
     cd $BUILD_ROOT_DIR
     git clone $IPROUTE2_GIT_URL
     cd iproute2
 
-    make CROSS_COMPILE=riscv64-unknown-linux-gnu- BUILD_CC=gcc && make install CROSS_COMPILE=riscv64-unknown-linux-gnu-
+    ./configure --prefix=$BUILD_ROOT_DIR/riscv64_pb_install \
+    --enable-static --host=riscv64-unknown-linux-gnu
 
+    make && make install
 }
 
 main () {

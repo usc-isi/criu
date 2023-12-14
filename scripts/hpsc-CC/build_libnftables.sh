@@ -30,8 +30,8 @@ download_extract () {
 }
 
 # build_libreadline_riscv64 () {
-#     export CFLAGS="-I$BUILD_ROOT_DIR/riscv64_pb_install/include"
-#     export LDFLAGS="-L$BUILD_ROOT_DIR/riscv64_pb_install/lib"
+#     export CFLAGS="-I$INCLUDE_DIR_CC"
+#     export LDFLAGS="-L$LIB_DIR_CC"
     
 #     wget -P $BUILD_ROOT_DIR $LIBREADLINE_DOWNLOAD_URL --quiet
 #     tarball="$(basename -- $LIBREADLINE_DOWNLOAD_URL)"
@@ -72,9 +72,9 @@ build_libncurses_riscv64 () {
 
 
 build_libedit_riscv64 () {
-    export CFLAGS="-I$BUILD_ROOT_DIR/riscv64_pb_install/include -I$BUILD_ROOT_DIR/riscv64_pb_install/include/ncurses"
-    export LDFLAGS="-L$BUILD_ROOT_DIR/riscv64_pb_install/lib"
-    export CPPFLAGS="-I$BUILD_ROOT_DIR/riscv64_pb_install/include -I$BUILD_ROOT_DIR/riscv64_pb_install/include/ncurses"
+    export CFLAGS="-I$INCLUDE_DIR_CC -I$INCLUDE_DIR_CC/ncurses"
+    export LDFLAGS="-L$LIB_DIR_CC"
+    export CPPFLAGS="-I$INCLUDE_DIR_CC -I$INCLUDE_DIR_CC/ncurses"
 
     printf "${BCyan}building libedit for $TARGET_ARCH${Color_Off}\n"
     # go to the folder where the extracted files are
@@ -134,8 +134,8 @@ build_libmnl_riscv64 () {
 
 build_libnftnl_riscv64 () {
     printf "${BCyan}building libnftnl for $TARGET_ARCH${Color_Off}\n"
-    export LIBMNL_CFLAGS="-I$BUILD_ROOT_DIR/riscv64_pb_install/include"
-    export LIBMNL_LIBS="-L$BUILD_ROOT_DIR/riscv64_pb_install/lib"
+    export LIBMNL_CFLAGS="-I$INCLUDE_DIR_CC"
+    export LIBMNL_LIBS="-L$LIB_DIR_CC"
     # go to the folder where the extracted files are
     cd $BUILD_ROOT_DIR
     git clone $LIBNFTNL_GIT_URL
@@ -157,12 +157,12 @@ build_libnftnl_riscv64 () {
 }
 
 build_libnftables_riscv64 () {
-    export LIBMNL_CFLAGS="-I$BUILD_ROOT_DIR/riscv64_pb_install/include"
-    export LIBMNL_LIBS="-L$BUILD_ROOT_DIR/riscv64_pb_install/lib"
-    export LIBNFTNL_CFLAGS="-I$BUILD_ROOT_DIR/riscv64_pb_install/include"
-    export LIBNFTNL_LIBS="-L$BUILD_ROOT_DIR/riscv64_pb_install/lib"
-    export LD_LIBRARY_PATH=$BUILD_ROOT_DIR/riscv64_pb_install/lib
-    export LDFLAGS="-L$BUILD_ROOT_DIR/riscv64_pb_install/lib"
+    export LIBMNL_CFLAGS="-I$INCLUDE_DIR_CC"
+    export LIBMNL_LIBS="-L$LIB_DIR_CC"
+    export LIBNFTNL_CFLAGS="-I$INCLUDE_DIR_CC"
+    export LIBNFTNL_LIBS="-L$LIB_DIR_CC"
+    export LD_LIBRARY_PATH=$LIB_DIR_CC
+    export LDFLAGS="-L$LIB_DIR_CC"
     # export LIBS="-ledit -lgmp -lnftnl -lmnl" # will break the build of libedit, but is needed for the build of nftables
 
     # go to the folder where the extracted files are
@@ -170,7 +170,7 @@ build_libnftables_riscv64 () {
     git clone $LIBNFTABLES_GIT_URL
     cd nftables
 
-    sudo apt-get install asciidoc # required by nftables
+    sudo apt-get install asciidoc --no-install-recommends # required by nftables
     measure_func_time build_libmnl_riscv64 # required by nftables 18.76 seconds
     measure_func_time build_libnftnl_riscv64 # required by nftables 48.05 seconds
     measure_func_time build_libgmp_riscv64 # required by nftables 203.69 seconds
@@ -186,9 +186,9 @@ build_libnftables_riscv64 () {
     LD=riscv64-unknown-linux-gnu-ld \
     AR=riscv64-unknown-linux-gnu-ar \
     STRIP=riscv64-unknown-linux-gnu-strip \
-    LDFLAGS=-L$BUILD_ROOT_DIR/riscv64_pb_install/lib \
-    CFLAGS="-I$BUILD_ROOT_DIR/riscv64_pb_install/include" \
-    CPPFLAGS="-I$BUILD_ROOT_DIR/riscv64_pb_install/include" \
+    LDFLAGS=-L$LIB_DIR_CC \
+    CFLAGS="-I$INCLUDE_DIR_CC" \
+    CPPFLAGS="-I$INCLUDE_DIR_CC" \
     LIBS="-ledit -lgmp -lnftnl -lmnl" \
     ../configure --prefix=$BUILD_ROOT_DIR/riscv64_pb_install \
     --enable-static --host=riscv64-unknown-linux-gnu

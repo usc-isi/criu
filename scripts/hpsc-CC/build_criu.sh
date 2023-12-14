@@ -8,7 +8,8 @@ cd $CRIU_ROOT_DIR
 
 # export PATH=$BUILD_ROOT_DIR/x86_64_pb_install/bin:$PATH
 # export PKG_CONFIG_PATH=$BUILD_ROOT_DIR/arm64_pb_install/lib/pkgconfig:$PKG_CONFIG_PATH
-export PKG_CONFIG_PATH=$BUILD_ROOT_DIR/riscv64_pb_install/lib/pkgconfig:$PKG_CONFIG_PATH
+# export PKG_CONFIG_PATH=$LIB_DIR_CC/pkgconfig:$LIB64_DIR_CC/pkgconfig
+export PKG_CONFIG_LIBDIR=$LIB_DIR_CC/pkgconfig:$LIB64_DIR_CC/pkgconfig #override PKG_CONFIG_PATH for cross compiling
 
 make mrproper
 
@@ -23,7 +24,7 @@ if [ -f "$file" ] ; then
 fi
 
 CFLAGS=$(pkg-config --cflags libprotobuf-c)
-CFLAGS+=" -I$INCLUDE_DIR_CC -L$LIB_DIR_CC -L$LIB64_DIR_CC"
+CFLAGS+=" -I$INCLUDE_DIR_CC -L$LIB_DIR_CC -L$LIB64_DIR_CC -Wl,-rpath-link,$LIB_DIR_CC -Wl,-rpath-link,$LIB64_DIR_CC"
 
 
 LDFLAGS=$(pkg-config --libs libprotobuf-c)

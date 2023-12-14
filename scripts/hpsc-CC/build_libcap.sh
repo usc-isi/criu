@@ -52,7 +52,7 @@ main () {
         
         "riscv64")
             printf "${BCyan}building libcap for $TARGET_ARCH${Color_Off}\n"
-             measure_func_time build_libcap_riscv64      
+            measure_func_time build_libcap_riscv64      
             ;;
 
         *)

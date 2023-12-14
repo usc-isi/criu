@@ -37,8 +37,8 @@ build_libbsd_riscv64 () {
     
     CC=riscv64-unknown-linux-gnu-gcc \
     CXX=riscv64-unknown-linux-gnu-g++ \
-    LDFLAGS=-L$BUILD_ROOT_DIR/riscv64_pb_install/lib \
-    CPPFLAGS=-I$BUILD_ROOT_DIR/riscv64_pb_install/include \
+    LDFLAGS=-L$LIB_DIR_CC \
+    CPPFLAGS=-I$INCLUDE_DIR_CC \
     ../configure --prefix=$BUILD_ROOT_DIR/riscv64_pb_install \
     --enable-static --host=riscv64-unknown-linux-gnu
 

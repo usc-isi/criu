@@ -131,12 +131,10 @@ build_protobufC_riscv64 () {
     cd riscv64_build
 
     # change pkg config path
-    export PKG_CONFIG_PATH=$BUILD_ROOT_DIR/riscv64_pb_install/lib/pkgconfig:$PKG_CONFIG_PATH
+    export PKG_CONFIG_PATH=$LIB_DIR_CC/pkgconfig:$PKG_CONFIG_PATH
 
     CC=riscv64-unknown-linux-gnu-gcc \
     CXX=riscv64-unknown-linux-gnu-g++ \
-    # CPPFLAGS="pkg-config --cflags protobuf" \
-    # LDFLAGS="pkg-config --libs protobuf" \
     ../configure --prefix=$BUILD_ROOT_DIR/riscv64_pb_install \
     --enable-static --disable-protoc --host=riscv64-unknown-linux-gnu
 
@@ -161,7 +159,7 @@ main () {
     
     download_extract
     
-    sudo apt-get install libprotobuf-dev libprotobuf-c-dev protobuf-c-compiler protobuf-compiler python3-protobuf
+    sudo apt-get install libprotobuf-dev libprotobuf-c-dev protobuf-c-compiler protobuf-compiler python3-protobuf --no-install-recommends
 
     case $TARGET_ARCH in
         "aarch64" | "arm64")

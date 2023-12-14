@@ -13,7 +13,8 @@ build_libaio_riscv64 () {
     tar -zxf $BUILD_ROOT_DIR/$tarball --directory $BUILD_ROOT_DIR   
 
     cd "$BUILD_ROOT_DIR/libaio-libaio-0.3.113" 
-    make CC=riscv64-unknown-linux-gnu-gcc prefix=$BUILD_ROOT_DIR/riscv64_pb_install && make install CC=riscv64-unknown-linux-gnu-gcc prefix=$BUILD_ROOT_DIR/riscv64_pb_install
+    make CC=riscv64-unknown-linux-gnu-gcc prefix=$BUILD_ROOT_DIR/riscv64_pb_install \
+    && make install CC=riscv64-unknown-linux-gnu-gcc prefix=$BUILD_ROOT_DIR/riscv64_pb_install
 }
 
 

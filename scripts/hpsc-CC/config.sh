@@ -23,7 +23,7 @@ mkdir -p $BUILD_ROOT_DIR
 # the path should be consistent with the prefix specified in the build scripts (e.g., build_protobuf.sh)
 INCLUDE_DIR_CC="$BUILD_ROOT_DIR/riscv64_pb_install/include"
 LIB_DIR_CC="$BUILD_ROOT_DIR/riscv64_pb_install/lib"
-LIB64_DIR_CC="$BUILD_ROOT_DIR/riscv64_pb_install/lib"
+LIB64_DIR_CC="$BUILD_ROOT_DIR/riscv64_pb_install/lib64"
 TOOLCHAIN_INCLUDE_DIR="$TOOLCHAIN_ROOT/sysroot/usr/include"
 
 # the directory that contains the toolchain libraries, e.g., libpthread.so.0
