@@ -114,8 +114,11 @@ build_libmnl_riscv64 () {
     printf "${BCyan}building libmnl for $TARGET_ARCH${Color_Off}\n"
     # go to the folder where the extracted files are
     cd $BUILD_ROOT_DIR
-    git clone $LIBMNL_GIT_URL
+    if [ ! -d "libmnl" ]; then        
+        git clone $LIBMNL_GIT_URL
+    fi
     cd libmnl
+    git checkout tags/libmnl-1.0.5
 
     ./autogen.sh
     mkdir -p riscv64_build
@@ -138,8 +141,12 @@ build_libnftnl_riscv64 () {
     export LIBMNL_LIBS="-L$LIB_DIR_CC"
     # go to the folder where the extracted files are
     cd $BUILD_ROOT_DIR
-    git clone $LIBNFTNL_GIT_URL
+
+    if [ ! -d "libnftnl" ]; then        
+        git clone $LIBNFTNL_GIT_URL
+    fi
     cd libnftnl
+    git checkout tags/libnftnl-1.2.6
 
     ./autogen.sh
     mkdir -p riscv64_build
@@ -167,8 +174,11 @@ build_libnftables_riscv64 () {
 
     # go to the folder where the extracted files are
     cd $BUILD_ROOT_DIR
-    git clone $LIBNFTABLES_GIT_URL
+    if [ ! -d "nftables" ]; then        
+        git clone $LIBNFTABLES_GIT_URL
+    fi
     cd nftables
+    git checkout tags/v1.0.9
 
     sudo apt-get install asciidoc --no-install-recommends # required by nftables
     measure_func_time build_libmnl_riscv64 # required by nftables 18.76 seconds

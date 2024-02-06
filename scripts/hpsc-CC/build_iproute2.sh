@@ -14,8 +14,11 @@ build_iproute2_riscv64 () {
     export PKG_CONFIG_LIBDIR=$LIB_DIR_CC/pkgconfig:$LIB64_DIR_CC/pkgconfig #override PKG_CONFIG_PATH for cross compiling
 
     cd $BUILD_ROOT_DIR
-    git clone $IPROUTE2_GIT_URL
+    if [ ! -d "iproute2" ]; then        
+        git clone $IPROUTE2_GIT_URL
+    fi
     cd iproute2
+    git checkout tags/v6.7.0
 
     ./configure --prefix=$BUILD_ROOT_DIR/riscv64_pb_install \
     --enable-static --host=riscv64-unknown-linux-gnu

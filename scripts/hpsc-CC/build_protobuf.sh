@@ -81,8 +81,11 @@ PROTOBUF_C_DOWNLOAD_URL="https://github.com/protobuf-c/protobuf-c/releases/downl
 # with newer version of protobuf, cmake is used instead and we cannot do ./configure
 build_protobuf_riscv64 () {
     cd $BUILD_ROOT_DIR
-    git clone $PROTOBUF_GIT_URL
+    if [ ! -d "protobuf" ]; then        
+        git clone $PROTOBUF_GIT_URL        
+    fi
     cd protobuf
+    git checkout tags/v25.2
     git submodule update --init --recursive
 
     mkdir -p riscv64_build

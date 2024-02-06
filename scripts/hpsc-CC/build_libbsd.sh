@@ -11,8 +11,12 @@ LIBMD_GIT_URL="https://git.hadrons.org/git/libmd.git" # libbsd requires libmd
 
 build_libmd_riscv64 () {
     cd $BUILD_ROOT_DIR
-    git clone $LIBMD_GIT_URL
+    if [ ! -d "libmd" ]; then        
+        git clone $LIBMD_GIT_URL
+    fi
     cd libmd
+    git checkout tags/1.1.0
+
 
     ./autogen
     mkdir -p riscv64_build
@@ -28,8 +32,13 @@ build_libmd_riscv64 () {
 
 build_libbsd_riscv64 () {
     cd $BUILD_ROOT_DIR
-    git clone $LIBBSD_GIT_URL
+    if [ ! -d "libbsd" ]; then        
+        git clone $LIBBSD_GIT_URL
+    fi
     cd libbsd
+    git checkout tags/0.11.8
+    
+    
 
     ./autogen
     mkdir -p riscv64_build
